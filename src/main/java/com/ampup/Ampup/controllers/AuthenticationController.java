@@ -17,8 +17,7 @@ import javax.validation.Valid;
 import java.util.Optional;
 
 @RestController
-public class  AuthenticationController {
-
+public class AuthenticationController {
 
     @Autowired
     private UserRepository userRepository;
@@ -28,10 +27,22 @@ public class  AuthenticationController {
 
     private static final String userSessionKey="user";
 
+
+    @GetMapping("/register")
+    public String displayRegistrionForm(Model model){
+        model.addAttribute(new RegisterFormDTO());
+        model.addAttribute("title","Register");
+        return "register";
+    }
+
     @PostMapping("/register")
     public String processRegistrationForm(@RequestBody @Valid RegisterFormDTO registerFormDTO,
                                           Errors errors, HttpServletRequest request,
                                           Model model) {
+
+        if (errors.hasErrors()) {
+            return "Invalid";
+        }
 
         User existingUser = userRepository.findByUsername(registerFormDTO.getUsername());
 
@@ -47,46 +58,47 @@ public class  AuthenticationController {
 
         User newUser = new User(registerFormDTO.getUsername(), registerFormDTO.getPassword());
         userRepository.save(newUser);
-//        authenticationService.setUserInSession(request.getSession(), newUser);
+        authenticationService.setUserInSession(request.getSession(), newUser);
 
         return "Success";
     }
 
-    @PostMapping("/login")
-    @CrossOrigin(origins = "*")
-    public String processLoginForm(@RequestBody @Valid LoginFormDTO loginFormDTO,
-                                   Errors errors,HttpServletRequest request,
-                                   Model model) {
 
+//    @PostMapping("/login")
+//    public String processLoginForm(@ModelAttribute @Valid LoginFormDTO loginFormDTO,
+//                                   Errors errors, HttpServletRequest request,
+//                                   Model model) {
+//
 //        if (errors.hasErrors()) {
 //            model.addAttribute("title", "Log In");
-//            return "";
+//            return "login";
 //        }
-
-        User theUser = userRepository.findByUsername(loginFormDTO.getUsername());
-        String password = loginFormDTO.getPassword();
-        if (theUser == null||!theUser.isMatchingPassword(password)) {
+//
+//        User theUser = userRepository.findByUsername(loginFormDTO.getUsername());
+//        String password = loginFormDTO.getPassword();
+//        if (theUser == null||!theUser.isMatchingPassword(password)) {
 //            errors.rejectValue("username", "user.invalid", "Invalid Username or Password");
 //            model.addAttribute("title", "Log In");
-            return "Invalid";
-        }
-
-
-
-        if (!theUser.isMatchingPassword(password)) {
-//            errors.rejectValue("password", "password.invalid", "Invalid Username or Password");
-//            model.addAttribute("title", "Log In");
-            return "Invalid";
-        }
-
-        authenticationService.setUserInSession(request.getSession(), theUser);
-
-        return "Success";
-    }
-
-    @GetMapping("/logout")
-    public String logout(HttpServletRequest request){
-        request.getSession().invalidate();
-        return "redirect:/login";
-    }
+//            return "login";
+//        }
+//
+//
+//
+////        if (!theUser.isMatchingPassword(password)) {
+////            errors.rejectValue("password", "password.invalid", "Invalid Username or Password");
+////            model.addAttribute("title", "Log In");
+////            return "login";
+////        }
+//
+//        authenticationService.setUserInSession(request.getSession(), theUser);
+//
+//        return "redirect:";
+//    }
+//
+//    @GetMapping("/logout")
+//    public String logout(HttpServletRequest request){
+//        request.getSession().invalidate();
+//        return "redirect:/login";
+//    }
 }
+//

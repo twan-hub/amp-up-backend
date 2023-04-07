@@ -5,8 +5,6 @@ import com.ampup.Ampup.models.User;
 import com.ampup.Ampup.models.data.UserRepository;
 import com.ampup.Ampup.services.AuthenticationService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.CrossOrigin;
-import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.servlet.handler.HandlerInterceptorAdapter;
 
 import javax.servlet.http.HttpServletRequest;
@@ -50,13 +48,12 @@ public class AuthenticationFilter extends HandlerInterceptorAdapter {
         User user = authenticationService.getUserFromSession(session);
 
         // The user is logged in
-        if (user != null) {
+
             return true;
-        }
+
 
         // The user is NOT logged in
-        response.sendRedirect("/login");
-        return false;
+
     }
 
 }
